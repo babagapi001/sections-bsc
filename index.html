@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Management</title>
+  <title>File Management with GitHub API</title>
   <style>
     table {
       width: 100%;
@@ -21,7 +21,7 @@
 </head>
 <body>
 
-  <h2>File Management System</h2>
+  <h2>File Management System (GitHub API)</h2>
 
   <!-- Search and Add New File -->
   <div>
@@ -45,98 +45,149 @@
   </table>
 
   <script>
-    // Function to render the table
-    function renderTable(data) {
-      const tableBody = document.querySelector("#fileTable tbody");
-      tableBody.innerHTML = ""; // Clear existing rows
+    const repoOwner = 'babagapi001'; // Replace with your GitHub username
+    const repoName = 'sections-bsc';  // Replace with your GitHub repo name
+    const accessToken = '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';  // Replace with your GitHub token
 
-      data.forEach((file, index) => {
+    // GitHub API endpoint
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
+
+    // Fetch and display files from the GitHub repository
+    function fetchFiles() {
+      fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${accessToken}`,
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        const files = data.filter(file => file.name.endsWith('.txt'));
+        renderTable(files);
+      })
+      .catch(error => console.error('Error fetching files:', error));
+    }
+
+    // Render files in the table
+    function renderTable(files) {
+      const tableBody = document.querySelector("#fileTable tbody");
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      files.forEach(file => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${file}</td>
+          <td>${file.name}</td>
           <td>
-            <button onclick="editFile('${file}')">Edit</button>
-            <button onclick="deleteFile('${file}')">Delete</button>
+            <button onclick="editFile('${file.name}')">Edit</button>
+            <button onclick="deleteFile('${file.name}')">Delete</button>
           </td>
         `;
         tableBody.appendChild(row);
       });
     }
 
-    // Function to search for files
-    function searchFiles() {
-      const searchText = document.getElementById('search').value.toLowerCase();
-      fetchFiles(searchText); // Fetch filtered files from server
-    }
-
-    // Function to add a new file
+    // Add a new file to the GitHub repository
     function addNewFile() {
       const fileName = prompt("Enter the new file name (must end with .txt):");
       if (fileName && fileName.endsWith(".txt")) {
-        fetch(`manageFiles.php?action=add&filename=${fileName}`, {
-          method: "GET"
-        }).then(response => response.json()).then(data => {
-          if (data.success) {
+        const fileContent = prompt("Enter content for the new file:");
+
+        fetch(apiUrl + fileName, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Add new file ${fileName}`,
+            content: btoa(fileContent), // Encode content as base64
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.commit) {
             alert("File added successfully!");
             fetchFiles(); // Reload the file list
-          } else {
-            alert("Error adding file.");
           }
-        });
+        })
+        .catch(error => alert("Error adding file."));
       } else {
         alert("Please enter a valid .txt file name.");
       }
     }
 
-    // Function to edit file name
-    function editFile(oldName) {
-      const newFileName = prompt("Enter new file name (must end with .txt):", oldName);
-      if (newFileName && newFileName !== oldName && newFileName.endsWith(".txt")) {
-        fetch(`manageFiles.php?action=edit&old=${oldName}&new=${newFileName}`, {
-          method: "GET"
-        }).then(response => response.json()).then(data => {
-          if (data.success) {
-            alert("File renamed successfully!");
+    // Edit an existing file on GitHub
+    function editFile(fileName) {
+      const newContent = prompt("Enter new content for the file:");
+
+      fetch(apiUrl + fileName, {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${accessToken}`,
+        },
+      })
+      .then(response => response.json())
+      .then(fileData => {
+        fetch(apiUrl + fileName, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Update file ${fileName}`,
+            content: btoa(newContent), // Encode new content as base64
+            sha: fileData.sha, // Provide the current file SHA for updating
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.commit) {
+            alert("File updated successfully!");
             fetchFiles(); // Reload the file list
-          } else {
-            alert("Error renaming file.");
           }
-        });
-      } else {
-        alert("Please enter a valid .txt file name.");
-      }
+        })
+        .catch(error => alert("Error updating file."));
+      })
+      .catch(error => alert("Error fetching file details."));
     }
 
-    // Function to delete a file
+    // Delete a file from GitHub
     function deleteFile(fileName) {
       if (confirm(`Are you sure you want to delete ${fileName}?`)) {
-        fetch(`manageFiles.php?action=delete&filename=${fileName}`, {
-          method: "GET"
-        }).then(response => response.json()).then(data => {
-          if (data.success) {
-            alert("File deleted successfully!");
-            fetchFiles(); // Reload the file list
-          } else {
-            alert("Error deleting file.");
-          }
-        });
+        fetch(apiUrl + fileName, {
+          method: 'GET',
+          headers: {
+            'Authorization': `token ${accessToken}`,
+          },
+        })
+        .then(response => response.json())
+        .then(fileData => {
+          fetch(apiUrl + fileName, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: `Delete file ${fileName}`,
+              sha: fileData.sha, // Provide the file SHA for deletion
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.commit) {
+              alert("File deleted successfully!");
+              fetchFiles(); // Reload the file list
+            }
+          })
+          .catch(error => alert("Error deleting file."));
+        })
+        .catch(error => alert("Error fetching file details."));
       }
     }
 
-    // Function to fetch files from the server (filterable by search term)
-    function fetchFiles(searchText = '') {
-      fetch(`manageFiles.php?action=list&search=${searchText}`, {
-        method: "GET"
-      }).then(response => response.json()).then(data => {
-        if (data.success) {
-          renderTable(data.files); // Render the list of files
-        } else {
-          alert("Error fetching files.");
-        }
-      });
-    }
-
-    // Initial load of files
+    // Initial file list fetch
     fetchFiles();
   </script>
 
