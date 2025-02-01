@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Management</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>File Management System</h2>
+
+  <!-- Search and Add New File -->
+  <div>
+    <label for="search">Search TXT Files:</label>
+    <input type="text" id="search" name="search" placeholder="Enter file name to search">
+    <button onclick="searchFiles()">Search</button>
+    <button onclick="addNewFile()">Add New TXT File</button>
+  </div>
+
+  <!-- Table to display files -->
+  <table id="fileTable">
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dynamic content will be added here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Function to render the table
+    function renderTable(data) {
+      const tableBody = document.querySelector("#fileTable tbody");
+      tableBody.innerHTML = ""; // Clear existing rows
+
+      data.forEach((file, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${file}</td>
+          <td>
+            <button onclick="editFile('${file}')">Edit</button>
+            <button onclick="deleteFile('${file}')">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Function to search for files
+    function searchFiles() {
+      const searchText = document.getElementById('search').value.toLowerCase();
+      fetchFiles(searchText); // Fetch filtered files from server
+    }
+
+    // Function to add a new file
+    function addNewFile() {
+      const fileName = prompt("Enter the new file name (must end with .txt):");
+      if (fileName && fileName.endsWith(".txt")) {
+        fetch(`manageFiles.php?action=add&filename=${fileName}`, {
+          method: "GET"
+        }).then(response => response.json()).then(data => {
+          if (data.success) {
+            alert("File added successfully!");
+            fetchFiles(); // Reload the file list
+          } else {
+            alert("Error adding file.");
+          }
+        });
+      } else {
+        alert("Please enter a valid .txt file name.");
+      }
+    }
+
+    // Function to edit file name
+    function editFile(oldName) {
+      const newFileName = prompt("Enter new file name (must end with .txt):", oldName);
+      if (newFileName && newFileName !== oldName && newFileName.endsWith(".txt")) {
+        fetch(`manageFiles.php?action=edit&old=${oldName}&new=${newFileName}`, {
+          method: "GET"
+        }).then(response => response.json()).then(data => {
+          if (data.success) {
+            alert("File renamed successfully!");
+            fetchFiles(); // Reload the file list
+          } else {
+            alert("Error renaming file.");
+          }
+        });
+      } else {
+        alert("Please enter a valid .txt file name.");
+      }
+    }
+
+    // Function to delete a file
+    function deleteFile(fileName) {
+      if (confirm(`Are you sure you want to delete ${fileName}?`)) {
+        fetch(`manageFiles.php?action=delete&filename=${fileName}`, {
+          method: "GET"
+        }).then(response => response.json()).then(data => {
+          if (data.success) {
+            alert("File deleted successfully!");
+            fetchFiles(); // Reload the file list
+          } else {
+            alert("Error deleting file.");
+          }
+        });
+      }
+    }
+
+    // Function to fetch files from the server (filterable by search term)
+    function fetchFiles(searchText = '') {
+      fetch(`manageFiles.php?action=list&search=${searchText}`, {
+        method: "GET"
+      }).then(response => response.json()).then(data => {
+        if (data.success) {
+          renderTable(data.files); // Render the list of files
+        } else {
+          alert("Error fetching files.");
+        }
+      });
+    }
+
+    // Initial load of files
+    fetchFiles();
+  </script>
+
+</body>
+</html>
