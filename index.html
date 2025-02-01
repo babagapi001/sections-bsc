@@ -45,9 +45,202 @@
   </table>
 
   <script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Management with GitHub API</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>File Management System (GitHub API)</h2>
+
+  <!-- Search and Add New File -->
+  <div>
+    <label for="search">Search TXT Files:</label>
+    <input type="text" id="search" name="search" placeholder="Enter file name to search">
+    <button onclick="searchFiles()">Search</button>
+    <button onclick="addNewFile()">Add New TXT File</button>
+  </div>
+
+  <!-- Table to display files -->
+  <table id="fileTable">
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dynamic content will be added here -->
+    </tbody>
+  </table>
+
+  <script>
     const repoOwner = 'babagapi001'; // Replace with your GitHub username
     const repoName = 'sections-bsc';  // Replace with your GitHub repo name
     const accessToken = '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';  // Replace with your GitHub token
+
+    // GitHub API endpoint
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
+
+    // Fetch and display files from the GitHub repository
+    function fetchFiles() {
+      fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${accessToken}`,
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        const files = data.filter(file => file.name.endsWith('.txt'));
+        renderTable(files);
+      })
+      .catch(error => console.error('Error fetching files:', error));
+    }
+
+    // Render files in the table
+    function renderTable(files) {
+      const tableBody = document.querySelector("#fileTable tbody");
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      files.forEach(file => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${file.name}</td>
+          <td>
+            <button onclick="editFile('${file.name}')">Edit</button>
+            <button onclick="deleteFile('${file.name}')">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Add a new file to the GitHub repository
+    function addNewFile() {
+      const fileName = prompt("Enter the new file name (must end with .txt):");
+      if (fileName && fileName.endsWith(".txt")) {
+        const fileContent = prompt("Enter content for the new file:");
+
+        fetch(apiUrl + fileName, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Add new file ${fileName}`,
+            content: btoa(fileContent), // Encode content as base64
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.commit) {
+            alert("File added successfully!");
+            fetchFiles(); // Reload the file list
+          }
+        })
+        .catch(error => alert("Error adding file."));
+      } else {
+        alert("Please enter a valid .txt file name.");
+      }
+    }
+
+    // Edit an existing file on GitHub
+    function editFile(fileName) {
+      const newContent = prompt("Enter new content for the file:");
+
+      fetch(apiUrl + fileName, {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${accessToken}`,
+        },
+      })
+      .then(response => response.json())
+      .then(fileData => {
+        fetch(apiUrl + fileName, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Update file ${fileName}`,
+            content: btoa(newContent), // Encode new content as base64
+            sha: fileData.sha, // Provide the current file SHA for updating
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.commit) {
+            alert("File updated successfully!");
+            fetchFiles(); // Reload the file list
+          }
+        })
+        .catch(error => alert("Error updating file."));
+      })
+      .catch(error => alert("Error fetching file details."));
+    }
+
+    // Delete a file from GitHub
+    function deleteFile(fileName) {
+      if (confirm(`Are you sure you want to delete ${fileName}?`)) {
+        fetch(apiUrl + fileName, {
+          method: 'GET',
+          headers: {
+            'Authorization': `token ${accessToken}`,
+          },
+        })
+        .then(response => response.json())
+        .then(fileData => {
+          fetch(apiUrl + fileName, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: `Delete file ${fileName}`,
+              sha: fileData.sha, // Provide the file SHA for deletion
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.commit) {
+              alert("File deleted successfully!");
+              fetchFiles(); // Reload the file list
+            }
+          })
+          .catch(error => alert("Error deleting file."));
+        })
+        .catch(error => alert("Error fetching file details."));
+      }
+    }
+
+    // Initial file list fetch
+    fetchFiles();
+  </script>
+
+</body>
+</html>
+
 
     // GitHub API endpoint
     const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
