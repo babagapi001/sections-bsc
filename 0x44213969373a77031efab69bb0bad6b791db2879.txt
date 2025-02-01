@@ -1,0 +1,146 @@
+<section class="container-xxl pt-8 pb-12">
+        
+        <div class="d-flex flex-wrap justify-content-start align-items-center gap-2 mb-3">
+            <button type="button" class="btn btn-white d-inline-flex align-items-center gap-1.5" id="btnConnectWallet">
+                <i id="connector" class="fa fa-circle text-danger fs-70x"></i>Connect to Web3
+            </button>
+
+            <button type="button" id="btnReset" class="btn btn-secondary" style="display: none;">Reset</button>
+
+            <p id="exposureRisks" class="text-info mb-0">
+                <strong>$0.00</strong> at risk
+            </p>
+        </div>
+        
+
+        
+        
+        
+
+        
+        
+        
+
+        
+        <div id="resultContainer" class="card">
+            
+            <div class="card-header">
+                <!-- Tabs Nav -->
+                <ul class="nav nav-pills text-nowrap snap-x-mandatory overflow-x-auto flex-nowrap gap-2" id="myTab" role="tablist">
+                    <li class="nav-item snap-align-start" role="presentation">
+                        <button id="erc20TabNav" type="button" role="tab" class="nav-link active" tabindex="0" data-bs-toggle="pill" data-bs-target="#erc20TabContent" aria-controls="erc20TabContent" aria-selected="true">
+                            BEP-20</button>
+                    </li>
+                </ul>
+                <!-- End Tabs Nav -->
+            </div>
+            
+
+            
+            <div class="card-body">
+                <div class="tab-content" id="tabContent">
+                    
+                    <div id="erc20TabContent" class="tab-pane fade show active" role="tabpanel" aria-labelledby="erc20TabNav" tabindex="0">
+                        <div class="table-responsive">
+                            <div id="tblErc20TokenApprovals_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="d-flex flex-wrap align-items-center justify-content-between gap-2 text-dark"><div class="dataTables_info p-0" id="tblErc20TokenApprovals_info" role="status" aria-live="polite">A total of <span class="fw-medium">3</span> Token Approvals found</div><div class="d-flex flex-wrap align-items-center justify-content-between gap-2"><div class="d-flex flex-wrap align-items-center justify-content-between gap-2 customErc20filter"><div class="d-flex align-items-center justify-content-between gap-1">
+                    <i class="far fa-question-circle text-secondary" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Review approval of only tokens held in this address or of all tokens."></i>
+                    <div id="erc20_showall_approvals_switch_wrapper" class="form-check form-switch form-check-reverse mb-0 pt-0.5" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Tokens that are held in this address. Click toggle to see all token approvals.">
+                        <input class="form-check-input" type="checkbox" role="switch" id="erc20_showall_approvals_switch" onclick="event.preventDefault();toggleERC20ZeroBalanceTokenSwitch(this);">
+                        <label class="form-check-label" for="erc20_showall_approvals_switch">
+                            Show all approvals
+                        </label>
+                    </div>
+                </div><div class="dropdown"><button class="btn btn-sm btn-white text-start w-100 dropdown-toggle px-3" type="button" id="erc20-dropdown" data-bs-toggle="dropdown" aria-expanded="false"><i class="far fa-filter text-muted me-1"></i>Filter by</button><div class="dropdown-menu dropdown-menu-sm-end" aria-labelledby="erc20-dropdown" style="width: max-content;"><div class="overflow-auto scrollbar-custom pe-1" style="max-height: 19rem;"><ul id="erc20-dropdown-menu" class="list nav nav-pills nav-pills-flush nav-list flex-column w-100"><li class="nav-item"><a class="nav-link filter-link d-flex align-items-center gap-1 active" href="javascript:void(0);" onclick="erc20FilterOnClick(this);" addr="" value="No Filter">No Filter</a><hr class="mt-2 mb-1"></li><li class="nav-item"><a class="nav-link filter-link d-flex align-items-center gap-1  " href="javascript:void(0);" onclick="erc20FilterOnClick(this);" addr="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" value="Bomb Crypto"><img class="rounded-circle" widht="18" height="18" src="/token/images/bombcrypto_32.png" alt="">Bomb Crypto</a><hr class="mt-2 mb-1"></li></ul></div></div></div></div><div class="dataTables_paginate paging_custompagination" id="tblErc20TokenApprovals_paginate" style="display: none;"><ul class="pagination pagination-sm mb-0"><li class="first paginate_button page-item" id="tblErc20TokenApprovals_first"><a href="#" aria-controls="tblErc20TokenApprovals_first" class="page-link">First</a></li><li class="previous paginate_button page-item" id="tblErc20TokenApprovals_previous"><a href="#" aria-controls="tblErc20TokenApprovals_previous" class="page-link px-3"><i class="fas fa-chevron-left small"></i></a></li><li class="page-item disabled"><span class="page-link text-nowrap">Page <span class="paginate_page"></span> of <span class="paginate_total"></span></span></li><li class="next paginate_button page-item" id="tblErc20TokenApprovals_next"><a href="#" aria-controls="tblErc20TokenApprovals_next" class="page-link px-3"><i class="fas fa-chevron-right small"></i></a></li><li class="last paginate_button page-item" id="tblErc20TokenApprovals_last"><a href="#" aria-controls="tblErc20TokenApprovals_last" class="page-link">Last</a></li></ul></div></div></div><div class="custom-datatables-processing"><div id="tblErc20TokenApprovals_processing" class="dataTables_processing card" style="display: none;"><!-- Spinner --><div id="overlay" class="text-center py-10 "><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><div class="small text-muted mt-1">Loading</div></div><!-- End Spinner --></div></div><table id="tblErc20TokenApprovals" class="table table-hover dataTable no-footer" aria-describedby="tblErc20TokenApprovals_info" role="grid">
+                                <thead class="align-middle text-nowrap">
+                                    <tr role="row"><th scope="col" class="sorting_disabled" rowspan="1" colspan="1">Transaction Hash</th><th scope="col" class="sorting_disabled" rowspan="1" colspan="1">
+                                            <a href="javascript:void(0);" class="ageDateColumnHeader" onclick="switchAgeToDateTime(this);" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Click to show Age Format">Last Updated (Local)</a>
+                                        </th><th data-highlight="" scope="col" class="sorting_disabled" rowspan="1" colspan="1">Assets</th><th data-highlight="" scope="col" class="sorting_disabled" rowspan="1" colspan="1">Approved Spender</th><th scope="col" class="sorting_disabled" rowspan="1" colspan="1">
+                                            <i class="far fa-question-circle me-1" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="The original token amount that the spender is allowed to spend on behalf of the owner."></i>Original Allowance
+                                        </th><th scope="col" class="sorting_disabled" rowspan="1" colspan="1"></th></tr>
+                                </thead>
+                                <tbody class="align-middle text-nowrap">
+                                    
+                    
+                    
+                    
+                                <tr role="row" class="odd">
+                        <td><div class="d-flex align-items-center gap-1"><a class="hash-tag text-truncate" style="max-width:7rem;" href="/tx/0x99cc6a44255c33bf0319bdc7bc4e605d53d838ae7fa40daee9ddde071f74ea99" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="0x99cc6a44255c33bf0319bdc7bc4e605d53d838ae7fa40daee9ddde071f74ea99">0x99cc6a44255c33bf0319bdc7bc4e605d53d838ae7fa40daee9ddde071f74ea99</a><a class="js-clipboard link-secondary  " href="javascript:;" data-clipboard-text="0x99cc6a44255c33bf0319bdc7bc4e605d53d838ae7fa40daee9ddde071f74ea99" data-bs-toggle="tooltip" data-bs-trigger="hover" data-hs-clipboard-options="{ &quot;type&quot;: &quot;tooltip&quot;, &quot;successText&quot;: &quot;Copied!&quot;, &quot;classChangeTarget&quot;: &quot;#linkIcon_tx_1&quot;, &quot;defaultClass&quot;: &quot;fa-copy&quot;, &quot;successClass&quot;: &quot;fa-check&quot; }" aria-label="Copy Transaction Hash"><i id="linkIcon_tx_1" class="far fa-copy fa-fw"></i> </a></div></td>
+                        <td><span class="showDate" data-bs-toggle="tooltip" data-bs-title="1096 days ago">2022-02-01 09:29:28</span><span class="showAge" style="display:none;" data-bs-toggle="tooltip" data-bs-title="2022-02-01 09:29:28">1096 days ago</span><span class="showLocalDate" style="display:none;" data-bs-toggle="tooltip" data-bs-title="1096 days ago">1643707768</span></td>
+                        <td style="--bs-border-radius: 0.375rem;"><div class="d-flex align-items-center gap-1">
+                         <a data-highlight-target="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" target="_blank" href="/address/0x00e1656e45f18ec6747f5a8496fd39b50b38396d" class="hash-tag text-truncate custome-token-logo border border-white px-1 mx-n1" style="--bs-border-opacity: 0;">
+                            <img src="/token/images/bombcrypto_32.png" width="18" class="rounded-circle me-1">
+                           <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Bomb Crypto"> Bomb Crypto </span>
+                        </a>
+                    </div></td>
+                        <td style="--bs-border-radius: 0.375rem;"><div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-1 dom-texthighlight border px-1 mx-n1 border-white" style="--bs-border-opacity: 0;"><i class="far fa-file-alt text-secondary me-1" data-bs-toggle="tooltip" data-bs-title="Contract"></i><a data-highlight-target="0x000000000000000000000000df1a1b60f2d438842916c0adc43748768353ec25" class="hash-tag text-truncate" target="_blank" href="/address/0xdf1a1b60f2d438842916c0adc43748768353ec25" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="0xdf1a1b60f2d438842916c0adc43748768353ec25">
+                            Kyber Swap: Aggregation Router 2
+                        </a></div>
+                        
+                    </div></td>
+                        <td><i class="me-1">Unlimited</i><a href="/token/0x00e1656e45f18ec6747f5a8496fd39b50b38396d">BCOIN</a></td>
+                        <td><span class="btnTooltipCls" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Connect the address owner's wallet to revoke approval.">
+                        <button type="button" class="btn btn-sm btn-primary btnUnapproveBtnCls" data-bs-toggle="modal" data-bs-target="#unApproveModal" approvaltype="approve" erc20addr="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" spenderaddr="0xdf1a1b60f2d438842916c0adc43748768353ec25" tokenapprovalerctype="Erc20Approval" tokensymbol="BCOIN" tokendecimal="18" originalallowance="Unlimited" disabled="">
+                            <i class="far fa-unlink me-1"></i>Revoke
+                        </button>
+                      </span></td>
+                    </tr><tr role="row" class="even">
+                        <td><div class="d-flex align-items-center gap-1"><a class="hash-tag text-truncate" style="max-width:7rem;" href="/tx/0xde7feff09acd9f2a0bffc3e3080fd6a2241e0ddcf06d776dde050f5a4ffcd40b" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="0xde7feff09acd9f2a0bffc3e3080fd6a2241e0ddcf06d776dde050f5a4ffcd40b">0xde7feff09acd9f2a0bffc3e3080fd6a2241e0ddcf06d776dde050f5a4ffcd40b</a><a class="js-clipboard link-secondary  " href="javascript:;" data-clipboard-text="0xde7feff09acd9f2a0bffc3e3080fd6a2241e0ddcf06d776dde050f5a4ffcd40b" data-bs-toggle="tooltip" data-bs-trigger="hover" data-hs-clipboard-options="{ &quot;type&quot;: &quot;tooltip&quot;, &quot;successText&quot;: &quot;Copied!&quot;, &quot;classChangeTarget&quot;: &quot;#linkIcon_tx_2&quot;, &quot;defaultClass&quot;: &quot;fa-copy&quot;, &quot;successClass&quot;: &quot;fa-check&quot; }" aria-label="Copy Transaction Hash"><i id="linkIcon_tx_2" class="far fa-copy fa-fw"></i> </a></div></td>
+                        <td><span class="showDate" data-bs-toggle="tooltip" data-bs-title="1101 days ago">2022-01-27 12:53:15</span><span class="showAge" style="display:none;" data-bs-toggle="tooltip" data-bs-title="2022-01-27 12:53:15">1101 days ago</span><span class="showLocalDate" style="display:none;" data-bs-toggle="tooltip" data-bs-title="1101 days ago">1643287995</span></td>
+                        <td style="--bs-border-radius: 0.375rem;"><div class="d-flex align-items-center gap-1">
+                         <a data-highlight-target="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" target="_blank" href="/address/0x00e1656e45f18ec6747f5a8496fd39b50b38396d" class="hash-tag text-truncate custome-token-logo border border-white px-1 mx-n1" style="--bs-border-opacity: 0;">
+                            <img src="/token/images/bombcrypto_32.png" width="18" class="rounded-circle me-1">
+                           <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Bomb Crypto"> Bomb Crypto </span>
+                        </a>
+                    </div></td>
+                        <td style="--bs-border-radius: 0.375rem;"><div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-1 dom-texthighlight border px-1 mx-n1 border-white" style="--bs-border-opacity: 0;"><i class="far fa-file-alt text-secondary me-1" data-bs-toggle="tooltip" data-bs-title="Contract"></i><a data-highlight-target="0x00000000000000000000000030cc0553f6fa1faf6d7847891b9b36eb559dc618" class="hash-tag text-truncate" target="_blank" href="/address/0x30cc0553f6fa1faf6d7847891b9b36eb559dc618" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="0x30cc0553f6fa1faf6d7847891b9b36eb559dc618">
+                            Bomb Crypto: BHERO
+                        </a></div>
+                        
+                    </div></td>
+                        <td><i class="me-1">Unlimited</i><a href="/token/0x00e1656e45f18ec6747f5a8496fd39b50b38396d">BCOIN</a></td>
+                        <td><span class="btnTooltipCls" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Connect the address owner's wallet to revoke approval.">
+                        <button type="button" class="btn btn-sm btn-primary btnUnapproveBtnCls" data-bs-toggle="modal" data-bs-target="#unApproveModal" approvaltype="approve" erc20addr="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" spenderaddr="0x30cc0553f6fa1faf6d7847891b9b36eb559dc618" tokenapprovalerctype="Erc20Approval" tokensymbol="BCOIN" tokendecimal="18" originalallowance="Unlimited" disabled="">
+                            <i class="far fa-unlink me-1"></i>Revoke
+                        </button>
+                      </span></td>
+                    </tr><tr role="row" class="odd">
+                        <td><div class="d-flex align-items-center gap-1"><a class="hash-tag text-truncate" style="max-width:7rem;" href="/tx/0x034a1836bf90a5b576059fc5ffb85be5211d5c1622039fcb530bf0a64df515cc" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="0x034a1836bf90a5b576059fc5ffb85be5211d5c1622039fcb530bf0a64df515cc">0x034a1836bf90a5b576059fc5ffb85be5211d5c1622039fcb530bf0a64df515cc</a><a class="js-clipboard link-secondary  " href="javascript:;" data-clipboard-text="0x034a1836bf90a5b576059fc5ffb85be5211d5c1622039fcb530bf0a64df515cc" data-bs-toggle="tooltip" data-bs-trigger="hover" data-hs-clipboard-options="{ &quot;type&quot;: &quot;tooltip&quot;, &quot;successText&quot;: &quot;Copied!&quot;, &quot;classChangeTarget&quot;: &quot;#linkIcon_tx_3&quot;, &quot;defaultClass&quot;: &quot;fa-copy&quot;, &quot;successClass&quot;: &quot;fa-check&quot; }" aria-label="Copy Transaction Hash"><i id="linkIcon_tx_3" class="far fa-copy fa-fw"></i> </a></div></td>
+                        <td><span class="showDate" data-bs-toggle="tooltip" data-bs-title="1101 days ago">2022-01-27 12:09:03</span><span class="showAge" style="display:none;" data-bs-toggle="tooltip" data-bs-title="2022-01-27 12:09:03">1101 days ago</span><span class="showLocalDate" style="display:none;" data-bs-toggle="tooltip" data-bs-title="1101 days ago">1643285343</span></td>
+                        <td style="--bs-border-radius: 0.375rem;"><div class="d-flex align-items-center gap-1">
+                         <a data-highlight-target="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" target="_blank" href="/address/0x00e1656e45f18ec6747f5a8496fd39b50b38396d" class="hash-tag text-truncate custome-token-logo border border-white px-1 mx-n1" style="--bs-border-opacity: 0;">
+                            <img src="/token/images/bombcrypto_32.png" width="18" class="rounded-circle me-1">
+                           <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Bomb Crypto"> Bomb Crypto </span>
+                        </a>
+                    </div></td>
+                        <td style="--bs-border-radius: 0.375rem;"><div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-1 dom-texthighlight border px-1 mx-n1 border-white" style="--bs-border-opacity: 0;"><i class="far fa-file-alt text-secondary me-1" data-bs-toggle="tooltip" data-bs-title="Contract"></i><a data-highlight-target="0x000000000000000000000000376a10e7f125a4e0a567cc08043c695cd8edd704" class="hash-tag text-truncate" target="_blank" href="/address/0x376a10e7f125a4e0a567cc08043c695cd8edd704" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="0x376a10e7f125a4e0a567cc08043c695cd8edd704">
+                            ERC1967Proxy
+                        </a></div>
+                        
+                    </div></td>
+                        <td><i class="me-1">Unlimited</i><a href="/token/0x00e1656e45f18ec6747f5a8496fd39b50b38396d">BCOIN</a></td>
+                        <td><span class="btnTooltipCls" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-title="Connect the address owner's wallet to revoke approval.">
+                        <button type="button" class="btn btn-sm btn-primary btnUnapproveBtnCls" data-bs-toggle="modal" data-bs-target="#unApproveModal" approvaltype="approve" erc20addr="0x00e1656e45f18ec6747f5a8496fd39b50b38396d" spenderaddr="0x376a10e7f125a4e0a567cc08043c695cd8edd704" tokenapprovalerctype="Erc20Approval" tokensymbol="BCOIN" tokendecimal="18" originalallowance="Unlimited" disabled="">
+                            <i class="far fa-unlink me-1"></i>Revoke
+                        </button>
+                      </span></td>
+                    </tr></tbody>
+                            </table><div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-3"><div class="d-flex align-items-center gap-2"><div class="dataTables_length" id="tblErc20TokenApprovals_length"><label class="d-flex align-items-center gap-2 text-muted">Show rows: <select name="tblErc20TokenApprovals_length" aria-controls="tblErc20TokenApprovals" class="form-select form-select-sm w-auto"><option value="10">10</option><option value="25">25</option></select></label></div></div><div class="dataTables_paginate paging_custompagination" id="tblErc20TokenApprovals_paginate" style="display: none;"><ul class="pagination pagination-sm mb-0"><li class="first paginate_button page-item" id="tblErc20TokenApprovals_first"><a href="#" aria-controls="tblErc20TokenApprovals_first" class="page-link">First</a></li><li class="previous paginate_button page-item" id="tblErc20TokenApprovals_previous"><a href="#" aria-controls="tblErc20TokenApprovals_previous" class="page-link px-3"><i class="fas fa-chevron-left small"></i></a></li><li class="page-item disabled"><span class="page-link text-nowrap">Page <span class="paginate_page"></span> of <span class="paginate_total"></span></span></li><li class="next paginate_button page-item" id="tblErc20TokenApprovals_next"><a href="#" aria-controls="tblErc20TokenApprovals_next" class="page-link px-3"><i class="fas fa-chevron-right small"></i></a></li><li class="last paginate_button page-item" id="tblErc20TokenApprovals_last"><a href="#" aria-controls="tblErc20TokenApprovals_last" class="page-link">Last</a></li></ul></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Page Description -->
+        <div class="mt-4">
+            <p class="fs-sm text-muted">
+                <i class="far fa-lightbulb-on text-secondary me-1"></i>
+                The Token Approvals page lists contracts that have been approved to spend an address’s tokens. The at risk amount shows what is vulnerable if the contracts were hacked. Learn more about this page in our <a target="_blank" href="https://info.bscscan.com//tokenapprovalchecker/">Knowledge Base</a>.
+            </p>
+        </div>
+        <!-- End Page Description -->
+    </section>
